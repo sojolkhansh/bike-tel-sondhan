@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { db } from "../lib/firebase";
 import { collection, onSnapshot } from "firebase/firestore";
 import PumpCard from "./PumpCard";
+import "leaflet/dist/leaflet.css";
 
 export default function MapView() {
   const [pumps, setPumps] = useState([]);
@@ -20,22 +21,29 @@ export default function MapView() {
   }, []);
 
   return (
-    <>
+    <div style={{ position: "relative", height: "100%", width: "100%" }}>
+
       {/* 🔥 ADD BUTTON */}
       <a href="/add" style={{
-        position: "fixed",
-        top: 10,
-        right: 10,
-        background: "green",
+        position: "absolute",
+        top: 15,
+        right: 15,
+        background: "#22c55e",
         color: "#fff",
-        padding: "10px",
+        padding: "10px 15px",
         borderRadius: "10px",
-        zIndex: 1000
+        fontWeight: "bold",
+        zIndex: 1000,
+        textDecoration: "none"
       }}>
         ➕ Add Pump
       </a>
 
-      <MapContainer center={[23.6, 90.3]} zoom={7} style={{ height: "90vh" }}>
+      <MapContainer
+        center={[23.6850, 90.3563]}
+        zoom={7}
+        style={{ height: "100%", width: "100%" }}
+      >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
         {pumps.map(p => (
@@ -46,6 +54,7 @@ export default function MapView() {
           </Marker>
         ))}
       </MapContainer>
-    </>
+
+    </div>
   );
 }
