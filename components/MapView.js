@@ -6,34 +6,39 @@ import PumpCard from "./PumpCard";
 import "leaflet/dist/leaflet.css";
 
 export default function MapView() {
-  const [pumps, setPumps] = useState([]);
+  const [pumps,setPumps]=useState([]);
   const [search,setSearch]=useState("");
+  const [userLoc,setUserLoc]=useState(null);
 
-  useEffect(() => {
-    const unsub = onSnapshot(collection(db, "pumps"), (snap) => {
-      setPumps(snap.docs.map(doc => ({ id:doc.id, ...doc.data() })));
+  useEffect(()=>{
+    navigator.geolocation.getCurrentPosition((pos)=>{
+      setUserLoc([pos.coords.latitude,pos.coords.longitude]);
     });
-    return () => unsub();
-  }, []);
+  },[]);
 
-  // 🔍 filter
-  const filtered = pumps.filter(p =>
+  useEffect(()=>{
+    const unsub=onSnapshot(collection(db,"pumps"),(snap)=>{
+      setPumps(snap.docs.map(doc=>({id:doc.id,...doc.data()})));
+    });
+    return ()=>unsub();
+  },[]);
+
+  const filtered=pumps.filter(p=>
     p.name?.toLowerCase().includes(search.toLowerCase()) ||
     p.city?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <div style={{ height:"100%", width:"100%", position:"relative" }}>
+    <div style={{height:"100%",position:"relative"}}>
 
-      {/* search */}
       <input
-        placeholder="🔍 Search pump..."
+        placeholder="🔍 Search..."
         value={search}
         onChange={(e)=>setSearch(e.target.value)}
         style={{
           position:"absolute",
-          top:15,
-          left:15,
+          top:10,
+          left:10,
           zIndex:1000,
           padding:"8px",
           borderRadius:"8px",
@@ -41,27 +46,32 @@ export default function MapView() {
         }}
       />
 
-      {/* add */}
       <a href="/add" style={{
         position:"absolute",
-        top:15,
-        right:15,
+        top:10,
+        right:10,
         background:"#22c55e",
-        padding:"10px",
-        borderRadius:"10px",
+        padding:"8px",
+        borderRadius:"8px",
         color:"#fff",
         zIndex:1000
       }}>
-        ➕ Add
+        ➕
       </a>
 
-      <MapContainer center={[23.6,90.3]} zoom={7} style={{height:"100%"}}>
+      <MapContainer center={userLoc||[23.6,90.3]} zoom={10} style={{height:"100%"}}>
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+
+        {userLoc && (
+          <Marker position={userLoc}>
+            <Popup>📍 You are here</Popup>
+          </Marker>
+        )}
 
         {filtered.map(p=>(
           <Marker key={p.id} position={[p.lat,p.lng]}>
             <Popup>
-              <PumpCard pump={p}/>
+              <PumpCard pump={p} userLoc={userLoc}/>
             </Popup>
           </Marker>
         ))}
