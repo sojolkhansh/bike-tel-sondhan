@@ -4,29 +4,26 @@ const MapView = dynamic(() => import("../components/MapView"), { ssr: false });
 export default function Home() {
   return (
     <div style={{ background:"#0f172a", minHeight:"100vh", color:"#fff" }}>
-
+      
       {/* TOP BAR */}
       <div style={{
-        padding:"15px",
         background:"#1e293b",
+        padding:"15px 20px",
         display:"flex",
-        justifyContent:"space-between"
+        justifyContent:"space-between",
+        alignItems:"center"
       }}>
         <h2>🚴 Bike Tel Sondhan</h2>
       </div>
 
-      {/* SMALL MAP BOX */}
-      <div style={{
-        display:"flex",
-        justifyContent:"center",
-        padding:"20px"
-      }}>
+      {/* MAP CARD */}
+      <div style={{ display:"flex", justifyContent:"center", padding:"20px" }}>
         <div style={{
-          width:"90%",
-          height:"60vh",
+          width:"95%",
+          height:"70vh",
           borderRadius:"15px",
           overflow:"hidden",
-          boxShadow:"0 0 20px rgba(0,0,0,0.5)"
+          boxShadow:"0 0 25px rgba(0,0,0,0.6)"
         }}>
           <MapView />
         </div>
