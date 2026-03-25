@@ -23,7 +23,7 @@ export default function MapView() {
   return (
     <div style={{ position: "relative", height: "100%", width: "100%" }}>
 
-      {/* 🔥 ADD BUTTON */}
+      {/* ➕ Add Button */}
       <a href="/add" style={{
         position: "absolute",
         top: 15,
@@ -32,7 +32,6 @@ export default function MapView() {
         color: "#fff",
         padding: "10px 15px",
         borderRadius: "10px",
-        fontWeight: "bold",
         zIndex: 1000,
         textDecoration: "none"
       }}>
@@ -40,10 +39,18 @@ export default function MapView() {
       </a>
 
       <MapContainer
-        center={[23.6850, 90.3563]}
+        center={[23.6850, 90.3563]} // BD center
         zoom={7}
+        minZoom={6}
+        maxZoom={18}
+        maxBounds={[
+          [20.5, 88.0],   // southwest
+          [26.5, 92.7]    // northeast
+        ]}
+        maxBoundsViscosity={1.0}
         style={{ height: "100%", width: "100%" }}
       >
+
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
         {pumps.map(p => (
