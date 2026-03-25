@@ -18,17 +18,19 @@ export default function MapView() {
   return (
     <div style={{ height:"100%", width:"100%", position:"relative" }}>
 
+      {/* ADD BUTTON */}
       <a href="/add" style={{
         position:"absolute",
-        top:10,
-        right:10,
+        top:15,
+        right:15,
         background:"#22c55e",
-        padding:"10px",
+        padding:"10px 15px",
         borderRadius:"10px",
         color:"#fff",
-        zIndex:1000
+        zIndex:1000,
+        textDecoration:"none"
       }}>
-        ➕ Add
+        ➕ Add Pump
       </a>
 
       <MapContainer center={[23.6,90.3]} zoom={7} style={{height:"100%"}}>
