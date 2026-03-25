@@ -3,124 +3,40 @@ import { db } from "../lib/firebase";
 import { collection, addDoc } from "firebase/firestore";
 
 export default function Add() {
-  const [data, setData] = useState({
-    name: "",
-    price: "",
-    division: "",
-    city: ""
-  });
+  const [data,setData]=useState({name:"",price:"",city:""});
 
-  const [loading, setLoading] = useState(false);
+  const getLocationFromCity = async (city) => {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${city} Bangladesh`
+    );
+    const result = await res.json();
+    return result[0];
+  };
 
-  const handleSubmit = () => {
-    if (!data.name || !data.price) {
-      alert("সব তথ্য দাও");
-      return;
-    }
+  const handleSubmit = async () => {
+    const loc = await getLocationFromCity(data.city);
 
-    setLoading(true);
-
-    navigator.geolocation.getCurrentPosition(async (pos) => {
-      await addDoc(collection(db, "pumps"), {
-        ...data,
-        lat: pos.coords.latitude,
-        lng: pos.coords.longitude,
-        sotti: 0,
-        mitha: 0,
-        createdAt: new Date()
-      });
-
-      alert("✅ Successfully Added!");
-      setLoading(false);
-      setData({ name: "", price: "", division: "", city: "" });
+    await addDoc(collection(db,"pumps"),{
+      ...data,
+      lat:parseFloat(loc.lat),
+      lng:parseFloat(loc.lon),
+      sotti:0,
+      mitha:0,
+      createdAt:new Date()
     });
+
+    alert("Added!");
   };
 
   return (
-    <div style={{
-      background: "#0f172a",
-      minHeight: "100vh",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center"
-    }}>
+    <div style={{padding:"20px"}}>
+      <h2>Add Pump</h2>
 
-      <div style={{
-        background: "#1e293b",
-        padding: "25px",
-        borderRadius: "15px",
-        width: "350px",
-        boxShadow: "0 0 20px rgba(0,0,0,0.5)"
-      }}>
+      <input placeholder="Name" onChange={e=>setData({...data,name:e.target.value})}/>
+      <input placeholder="Price" onChange={e=>setData({...data,price:e.target.value})}/>
+      <input placeholder="City" onChange={e=>setData({...data,city:e.target.value})}/>
 
-        <h2 style={{ textAlign: "center", marginBottom: "20px" }}>
-          ⛽ Add Petrol Pump
-        </h2>
-
-        <input
-          placeholder="Pump Name"
-          value={data.name}
-          onChange={(e)=>setData({...data,name:e.target.value})}
-          style={inputStyle}
-        />
-
-        <select
-          value={data.price}
-          onChange={(e)=>setData({...data,price:e.target.value})}
-          style={inputStyle}
-        >
-          <option value="">Select Price</option>
-          <option>100 tk</option>
-          <option>200 tk</option>
-          <option>500 tk</option>
-          <option>Full Tank</option>
-        </select>
-
-        <select
-          value={data.division}
-          onChange={(e)=>setData({...data,division:e.target.value})}
-          style={inputStyle}
-        >
-          <option value="">Select Division</option>
-          <option>Dhaka</option>
-          <option>Rajshahi</option>
-          <option>Chattogram</option>
-          <option>Khulna</option>
-        </select>
-
-        <input
-          placeholder="City"
-          value={data.city}
-          onChange={(e)=>setData({...data,city:e.target.value})}
-          style={inputStyle}
-        />
-
-        <button
-          onClick={handleSubmit}
-          style={{
-            width: "100%",
-            padding: "12px",
-            borderRadius: "10px",
-            background: "#22c55e",
-            border: "none",
-            color: "#fff",
-            fontWeight: "bold",
-            cursor: "pointer"
-          }}
-        >
-          {loading ? "Adding..." : "Submit"}
-        </button>
-
-      </div>
+      <button onClick={handleSubmit}>Submit</button>
     </div>
   );
 }
-
-const inputStyle = {
-  width: "100%",
-  padding: "10px",
-  marginBottom: "10px",
-  borderRadius: "8px",
-  border: "none",
-  outline: "none"
-};
